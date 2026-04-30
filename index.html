@@ -3,8 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Wedding Seating</title>
-
+  <title>Joe & Simon's Wedding Breakfast</title>
   <style>
     :root {
       --background: #3f5133;
@@ -23,12 +22,12 @@
     }
 
     body {
-      margin: 0;
-      min-height: 100vh;
-      display: grid;
-      align-items: start;
-      justify-items: center;
-      padding: 0 20px 32px;
+  margin: 0;
+  min-height: 100vh;
+  display: grid;
+  align-items: start;
+  justify-items: center;
+  padding: 0 20px 32px;
       background:
         radial-gradient(circle at top, rgba(251, 250, 247, 0.08), transparent 38%),
         var(--background);
@@ -39,9 +38,50 @@
       text-align: center;
     }
 
+    .logo {
+      width: min(170px, 42vw);
+      height: auto;
+      display: block;
+      margin: 0 auto 26px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(3rem, 10vw, 5.4rem);
+      line-height: 0.96;
+      font-weight: 400;
+      letter-spacing: -0.03em;
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin: 34px auto 30px;
+      color: var(--accent);
+    }
+
+    .divider::before,
+    .divider::after {
+      content: "";
+      width: 140px;
+      max-width: 28vw;
+      height: 1px;
+      background: currentColor;
+    }
+
+    .divider span {
+      font-size: 1.35rem;
+      line-height: 1;
+    }
+
     p {
-      margin: 32px 0 28px;
+      margin: 0 0 28px;
       font-size: clamp(1.35rem, 4vw, 1.8rem);
+      line-height: 1.25;
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
     }
 
     label {
@@ -49,6 +89,7 @@
       text-align: left;
       font-weight: 700;
       margin-bottom: 8px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     }
 
     .input-wrap {
@@ -60,8 +101,9 @@
       position: absolute;
       left: 18px;
       top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.8rem;
+      transform: translateY(-52%);
+      font-size: 2.1rem;
+      color: var(--text);
       pointer-events: none;
     }
 
@@ -69,111 +111,366 @@
       width: 100%;
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 20px 20px 20px 70px;
-      font-size: 1.5rem;
+      : 22px 22px 22px 90px;
+      font: inherit;
+      font-size: clamp(1.4rem, 4vw, 2rem);
       color: var(--text);
       background: var(--panel);
       outline: none;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     }
 
     input::placeholder {
-      color: rgba(251, 250, 247, 0.6);
+      color: rgba(251, 250, 247, 0.62);
+    }
+
+    input:focus {
+      border-color: var(--text);
+      background: var(--panel-strong);
     }
 
     button {
-      display: none;
-    }
-
-    .logo {
-      width: min(140px, 40vw);
-      margin: 40px auto 16px;
-      display: block;
-    }
-
-    .divider {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      margin: 16px auto 24px;
-      color: var(--accent);
-    }
-
-    .divider::before,
-    .divider::after {
-      content: "";
-      width: 120px;
+      position: absolute;
+      width: 1px;
       height: 1px;
-      background: currentColor;
+      : 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    .result {
+      margin-top: 20px;
+      padding: 32px 28px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--panel);
+      display: none;
+      text-align: left;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .seat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr;
+      gap: 28px;
+      align-items: center;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .seat-grid .line {
+      width: 1px;
+      min-height: 90px;
+      background: var(--accent);
+      opacity: 0.75;
+    }
+
+    .label {
+      display: block;
+      margin-bottom: 10px;
+      font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 0.9rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .number {
+      display: block;
+      font-size: 3.2rem;
+      line-height: 1;
+    }
+
+    .guest-name {
+      font-size: clamp(2rem, 7vw, 3rem);
+      line-height: 1;
+      margin-top: 8px;
+    }
+
+    .error {
+      text-align: center;
+    }
+
+    .error strong {
+      display: block;
+      font-size: 1.5rem;
+      margin-bottom: 10px;
     }
 
     .hint {
-      margin-top: 20px;
-      font-size: 1rem;
+      margin-top: 28px;
+      font-size: 1.1rem;
+      line-height: 1.5;
+      color: var(--text);
+      text-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+    }
+
+    @media (max-width: 520px) {
+      body {
+        padding-top: 24px;
+      }
+
+      .result {
+        padding: 24px 18px;
+      }
+
+      .seat-grid {
+        gap: 18px;
+      }
     }
   </style>
 </head>
-
 <body>
   <main class="card">
+    <img class="logo" src="Logo JS transparent.png" alt="JS monogram" />
+
+    <h1></h1>
+
+    <div class="divider" aria-hidden="true"><span>◇</span></div>
 
     <p>Type your name to find your seat:</p>
 
     <form id="seatForm">
       <label for="guestName">Your name</label>
       <div class="input-wrap">
-        <input id="guestName" type="text" placeholder="e.g. Alex Smith" />
+        <input id="guestName" type="text" autocomplete="name" placeholder="e.g. Alex Smith" required />
       </div>
       <button type="submit">Search</button>
     </form>
 
-    <!-- moved below -->
-    <img class="logo" src="Logo JS transparent.png" alt="JS monogram" />
-
-    <div class="divider"><span>◇</span></div>
-
-    <div id="result"></div>
+    <div id="result" class="result" aria-live="polite"></div>
 
     <div class="hint">
-      Can’t find your name?<br />
-      Please check the spelling or visit the seating chart.
+      Can’t find your name?<br />Please check the spelling or visit the seating chart.
     </div>
-
   </main>
 
   <script>
+    // Replace this sample list with your real guest list.
+    // Keep names unique where possible to avoid duplicate matches.
     const guests = [
       { name: "Joseph Allen", table: "Moraira", seat: "1" },
-      { name: "Simon Lee", table: "Moraira", seat: "2" }
+      { name: "Simon Lee", table: "Moraira", seat: "2" },
+      { name: "Susan Allen", table: "Moraira", seat: "3" },
+      { name: "Bridget Eccles", table: "Moraira", seat: "4" },
+      { name: "Octavia Allen", table: "Moraira", seat: "5" },
+      { name: "George Allen", table: "Moraira", seat: "6" },
+      { name: "Lydia Allen", table: "Moraira", seat: "7" },
+      { name: "Havana Allen", table: "Moraira", seat: "8" },
+      { name: "Ian Russell", table: "Moraira", seat: "9" },
+      { name: "Sarah Russell", table: "Moraira", seat: "10" },
+      { name: "Tony Russell", table: "Moraira", seat: "11" },
+      { name: "Jenni Russell", table: "Moraira", seat: "12" },
+      { name: "Mark Allen", table: "Moraira", seat: "13" },
+      { name: "Lottie Allen", table: "Moraira", seat: "14" },
+      { name: "David Allen", table: "Moraira", seat: "15" },
+      { name: "Sally Allen", table: "Moraira", seat: "16" },
+      { name: "Sue Davis", table: "Moraira", seat: "17" },
+      { name: "Jason Davis", table: "Moraira", seat: "18" },
+      { name: "Stuart Jupe", table: "Moraira", seat: "19" },
+      { name: "Nicky Jupe", table: "Moraira", seat: "20" },
+      { name: "Steve Daley", table: "Moraira", seat: "21" },
+      { name: "Kerry Daley", table: "Moraira", seat: "22" },
+      { name: "Emma Morris", table: "Moraira", seat: "23" },
+      { name: "Hannah Thompson", table: "Moraira", seat: "24" },
+      { name: "Martin Bruce", table: "Moraira", seat: "25" },
+      { name: "Matt Allwright", table: "Moraira", seat: "26" },
+      { name: "Ranj Singh", table: "Moraira", seat: "27" },
+      { name: "Gethin Jones", table: "Moraira", seat: "28" },
+      { name: "Hannah Swinglehurst", table: "Moraira", seat: "29" },
+      { name: "Jemma Martinez", table: "Moraira", seat: "30" },
+      { name: "Rob Unsworth", table: "Moraira", seat: "31" },
+      { name: "Gareth Bebb-Sier", table: "Moraira", seat: "32" },
+      { name: "Sonia Bebb-Sier", table: "Moraira", seat: "33" },
+      { name: "Mark Harrison", table: "Moraira", seat: "34" },
+      { name: "Holly Harrison", table: "Moraira", seat: "35" },
+      { name: "Nicole Han", table: "Moraira", seat: "36" },
+      { name: "Alistair Han", table: "Moraira", seat: "37" },
+      { name: "Charles Béquignon-MacDougall", table: "Moraira", seat: "38" },
+      { name: "Clément Béquignon-MacDougall", table: "Moraira", seat: "39" },
+      { name: "Chris Watson", table: "Moraira", seat: "40" },
+      { name: "Jon Williams", table: "Moraira", seat: "41" },
+      { name: "Laura Myers-Girling", table: "Moraira", seat: "42" },
+      { name: "Rachel Myres-Girling", table: "Moraira", seat: "43" },
+      { name: "Julia Riddle", table: "Moraira", seat: "44" },
+      { name: "Alex Goy", table: "Moraira", seat: "45" },
+      { name: "Rory Malone", table: "Moraira", seat: "46" },
+      { name: "James Hodgson", table: "Moraira", seat: "47" },
+      { name: "Hamish McCallum", table: "Moraira", seat: "48" },
+      { name: "Zak Boosh", table: "Moraira", seat: "49" },
+      { name: "Jamie Ashford", table: "Moraira", seat: "50" },
+      { name: "James Mulholland", table: "Moraira", seat: "51" },
+      { name: "Alex Paterakis", table: "Moraira", seat: "52" },
+      { name: "Duncan Souster", table: "Moraira", seat: "53" },
+      { name: "Adolf Canizales", table: "Moraira", seat: "54" },
+      { name: "Giles Gale", table: "Moraira", seat: "55" },
+      { name: "Conor Ward", table: "Moraira", seat: "56" },
+      { name: "Will Tyler-Dave", table: "Moraira", seat: "57" },
+      { name: "Jonny Tyler-Dave", table: "Moraira", seat: "58" },
+      { name: "Ethan Spibey", table: "Moraira", seat: "59" },
+      { name: "Soren Scharf", table: "Moraira", seat: "60" },
+      { name: "David Meredith", table: "Moraira", seat: "61" },
+      { name: "Graeme Maynard", table: "Moraira", seat: "62" },
+      { name: "Juma Weeks", table: "Moraira", seat: "63" },
+      { name: "Tim Millward", table: "Moraira", seat: "64" },
+      { name: "Jack Irwin", table: "Moraira", seat: "65" },
+      { name: "Osman Dervish", table: "Moraira", seat: "66" },
+      { name: "Mark Harrop", table: "Moraira", seat: "67" },
+      { name: "Chris Lee", table: "Moraira", seat: "68" },
+      { name: "Robert Lee", table: "Moraira", seat: "69" },
+      { name: "Kate Lee", table: "Moraira", seat: "70" },
+      { name: "Janette Watson", table: "Moraira", seat: "71" },
+      { name: "Bob Watson", table: "Moraira", seat: "72" },
+      { name: "Samantha Cundell-Ahuja", table: "Moraira", seat: "73" },
+      { name: "Joe Ahuja", table: "Moraira", seat: "74" },
+      { name: "Joanna Gill", table: "Moraira", seat: "75" },
+      { name: "Jill Smoller", table: "Moraira", seat: "76" },
+      { name: "Laetitia Loffredo", table: "Moraira", seat: "77" },
+      { name: "David Law", table: "Moraira", seat: "78" },
+      { name: "Jonny Brewer", table: "Moraira", seat: "79" },
+      { name: "Tom Forman", table: "Moraira", seat: "80" },
+      { name: "Will Nathan", table: "Moraira", seat: "81" },
+      { name: "Theo Lomas", table: "Moraira", seat: "82" },
+      { name: "Kieran O'Brien", table: "Moraira", seat: "83" },
+      { name: "Joe Granata", table: "Moraira", seat: "84" },
+      { name: "Tom Spratt", table: "Moraira", seat: "85" },
+      { name: "Markus Carlsson", table: "Moraira", seat: "86" },
+      { name: "Cormac Kerins", table: "Moraira", seat: "87" },
+      { name: "David James", table: "Moraira", seat: "88" },
+      { name: "Christopher Farrar", table: "Moraira", seat: "89" },
+      { name: "Michael Salter-Church", table: "Moraira", seat: "90" },
+      { name: "Rob Salter-Church", table: "Moraira", seat: "91" },
+      { name: "Andre Kong", table: "Moraira", seat: "92" },
+      { name: "Dan Hunter", table: "Moraira", seat: "93" },
+      { name: "Easton Bilsborough", table: "Moraira", seat: "94" },
+      { name: "Ben Webster", table: "Moraira", seat: "95" },
+      { name: "Stewart Parvin", table: "Moraira", seat: "96" },
+      { name: "Jack Harding", table: "Moraira", seat: "97" },
+      { name: "Darren Fowler", table: "Moraira", seat: "98" },
+      { name: "Gabriel Pavlides", table: "Moraira", seat: "99" },
+      { name: "James Treacy", table: "Moraira", seat: "100" },
+      { name: "Joe Treacy", table: "Moraira", seat: "101" },
+      { name: "James Truckell", table: "Moraira", seat: "102" },
+      { name: "James Thompson", table: "Moraira", seat: "103" },
+      { name: "Tudor Havriliuc", table: "Moraira", seat: "104" },
+      { name: "David Corbell", table: "Moraira", seat: "105" },
+      { name: "Kate Forde", table: "Moraira", seat: "106" },
+      { name: "Eva Barboni", table: "Moraira", seat: "107" },
+      { name: "Iain Walters", table: "Moraira", seat: "108" },
+      { name: "Denis Harrington", table: "Moraira", seat: "109" },
+      { name: "Callum Booth", table: "Moraira", seat: "110" },
+      { name: "Harry Edwards", table: "Moraira", seat: "111" },
+      { name: "Tom Foley", table: "Moraira", seat: "112" },
+      { name: "Joe Attard", table: "Moraira", seat: "113" },
+      { name: "Ryan Davies", table: "Moraira", seat: "114" },
+      { name: "Henry Bray", table: "Moraira", seat: "115" },
+      { name: "Antonis Athanasiades", table: "Moraira", seat: "116" },
+      { name: "Rob Ryan", table: "Moraira", seat: "117" },
+      { name: "Sam Henningan", table: "Moraira", seat: "118" },
+      { name: "Alex Wilson", table: "Moraira", seat: "119" },
+      { name: "Matt Brinkler", table: "Moraira", seat: "120" },
+      { name: "Matthias Jacobs", table: "Moraira", seat: "121" },
+      { name: "Kimberley Waller", table: "Moraira", seat: "122" },
+      { name: "Harry Waller", table: "Moraira", seat: "123" },
+      { name: "Polly Day", table: "Moraira", seat: "124" },
+      { name: "Jenny Day", table: "Moraira", seat: "125" },
+      { name: "Christina Shiels", table: "Moraira", seat: "126" },
+      { name: "Becky Robinson", table: "Moraira", seat: "127" },
+      { name: "Sam Robinson", table: "Moraira", seat: "128" },
+      { name: "Emma Cruise", table: "Moraira", seat: "129" },
+      { name: "Jonny Wooley", table: "Moraira", seat: "130" },
+      { name: "Tom Anderton", table: "Moraira", seat: "131" },
+      { name: "Caitlin Anderton", table: "Moraira", seat: "132" },
+      { name: "Barney Bedford", table: "Moraira", seat: "133" },
+      { name: "Jenny Carson", table: "Moraira", seat: "134" },
+      { name: "Sarah Bailey", table: "Moraira", seat: "135" },
+      { name: "Laura Dean", table: "Moraira", seat: "136" },
+      { name: "Mark Lutton", table: "Moraira", seat: "137" },
+      { name: "Emily Harris", table: "Moraira", seat: "138" },
+      { name: "Steve Harris", table: "Moraira", seat: "139" },
+      { name: "Charli Taylor-Drake", table: "Moraira", seat: "140" },
+      { name: "Adam Taylor-Drake", table: "Moraira", seat: "141" },
+      { name: "Joe Parsons", table: "Moraira", seat: "142" },
+      { name: "Rebecca Parsons", table: "Moraira", seat: "143" },
+      { name: "David Chaplin", table: "Moraira", seat: "144" },
+      { name: "Cameron Ball", table: "Moraira", seat: "145" },
+      { name: "Rees Whiteley", table: "Moraira", seat: "146" },
+      { name: "Lynton Williams", table: "Moraira", seat: "147" },
+      { name: "Cristo Bussmann-Stuart", table: "Moraira", seat: "148" },
+      { name: "Gus Bussmann-Stuart", table: "Moraira", seat: "149" },
+      { name: "Brian Oliver", table: "Moraira", seat: "150" }
     ];
 
+    const form = document.getElementById("seatForm");
     const input = document.getElementById("guestName");
     const result = document.getElementById("result");
 
     function normalise(value) {
-      return value.toLowerCase().trim();
+      return value
+        .toLowerCase()
+        .trim()
+        .replace(/[^a-z0-9 ]/g, "")
+        .replace(/\s+/g, " ");
     }
 
-    input.addEventListener("input", () => {
-      const search = normalise(input.value);
+    function showMessage(html, isError = false) {
+      result.innerHTML = html;
+      result.className = `result${isError ? " error" : ""}`;
+      result.style.display = "block";
+    }
 
-      if (!search) {
+    function searchGuest() {
+      const searchName = normalise(input.value);
+
+      if (!searchName) {
+        result.style.display = "none";
         result.innerHTML = "";
         return;
       }
 
-      const match = guests.find(g =>
-        normalise(g.name).includes(search)
-      );
+      const matches = guests.filter((guest) => {
+        const guestName = normalise(guest.name);
+        return guestName === searchName || guestName.includes(searchName);
+      });
 
-      if (match) {
-        result.innerHTML = `
-          <p><strong>${match.name}</strong></p>
-          <p>Table: ${match.table} | Seat: ${match.seat}</p>
-        `;
+      if (matches.length === 1) {
+        const guest = matches[0];
+        showMessage(`
+          <div class="seat-grid">
+            <div>
+              <span class="label">Table</span>
+              <span class="number">${guest.table}</span>
+            </div>
+            <div class="line" aria-hidden="true"></div>
+            <div>
+              <span class="label">Seat</span>
+              <span class="number">${guest.seat}</span>
+            </div>
+          </div>
+          <div>You’re seated at:</div>
+          <div class="guest-name">${guest.name}</div>
+        `);
+      } else if (matches.length > 1) {
+        showMessage(`
+          <strong>We found a few possible matches.</strong>
+          Keep typing your full name.<br /><br />
+          ${matches.map((guest) => guest.name).join("<br />")}
+        `, true);
       } else {
-        result.innerHTML = `<p>No match found</p>`;
+        showMessage(`
+          <strong>Sorry, we couldn’t find that name.</strong>
+          Please check the spelling, or ask one of the wedding party.
+        `, true);
       }
+    }
+
+    input.addEventListener("input", searchGuest);
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      searchGuest();
     });
   </script>
 </body>
